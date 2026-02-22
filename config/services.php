@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'daun' => [
+        'api_url' => env('DAUN_API_URL', 'https://daun.me'),
+        'api_key' => env('DAUN_API_KEY'),
+        'enabled' => env('DAUN_ENABLED', false),
+    ],
+
 ];

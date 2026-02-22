@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DailyAnalytic;
 use App\Models\Institution;
+use App\Models\QrCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class InstitutionController extends Controller
 {
@@ -100,5 +103,28 @@ class InstitutionController extends Controller
         );
 
         return response()->json($institution);
+    }
+
+    // GET /api/v1/institutions/{institution}/qr-codes/{qrCode}/download
+    // Download QR code and track the download
+    public function downloadQrCode(Institution $institution, QrCode $qrCode)
+    {
+        // Verify QR code belongs to institution and is active
+        if ($qrCode->institution_id !== $institution->id || $qrCode->status !== 'active') {
+            abort(404);
+        }
+
+        // Track QR download
+        DailyAnalytic::incrementToday('qr_downloads');
+
+        // Resolve the file path from the URL
+        $filePath = parse_url($qrCode->qr_image_url, PHP_URL_PATH);
+        $diskPath = str_replace('/storage/', 'public/', $filePath);
+
+        // Return QR code image file
+        return response()->download(
+            Storage::path($diskPath),
+            'qr-' . $institution->slug . '.png'
+        );
     }
 }

@@ -22,8 +22,11 @@ Route::prefix('v1')->group(function () {
     Route::middleware('throttle:15,1')->group(function () {
         // Institutions
         Route::get('/institutions', [InstitutionController::class, 'index']);
-        Route::get('/institutions/{institution}', [InstitutionController::class, 'show']);
+        Route::get('/institutions/{institution}', [InstitutionController::class, 'show'])->middleware('track.visit');
         Route::get('/institutions/slug/{slug}', [InstitutionController::class, 'showBySlug']);
+
+        // QR Code downloads
+        Route::get('/institutions/{institution}/qr-codes/{qrCode}/download', [InstitutionController::class, 'downloadQrCode']);
 
         // Payment methods
         Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
