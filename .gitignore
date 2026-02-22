@@ -23,3 +23,12 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 .claude/
+docs/
+CLAUDE.md
+
+# Generated documentation (not version controlled)
+# Keep docs/PRD/ in repo (source of truth)
+# Exclude generated guides and deployment configs
+/docs/GUIDES/
+/docs/DEPLOYMENT/
+/docs/CONFIG/

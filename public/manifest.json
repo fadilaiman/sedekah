@@ -1,0 +1,44 @@
+{
+  "name": "Sedekah.online",
+  "short_name": "Sedekah",
+  "description": "Direktori QR kod derma institusi Islam di Malaysia",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f0f7f1",
+  "theme_color": "#355E3B",
+  "lang": "ms",
+  "categories": ["lifestyle", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Cari Institusi",
+      "url": "/institutions",
+      "description": "Cari institusi derma berdekatan anda"
+    },
+    {
+      "name": "Hantar Institusi",
+      "url": "/submit",
+      "description": "Hantar institusi baharu untuk semakan"
+    }
+  ]
+}

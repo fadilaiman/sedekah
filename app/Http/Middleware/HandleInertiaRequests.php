@@ -2,7 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Category;
+use App\Models\Submission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -34,6 +37,25 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
+            'pendingSubmissions' => $request->user()?->isAdmin()
+                ? Submission::where('status', 'pending')->count()
+                : 0,
+            'categories' => Cache::remember('inertia_categories', 3600, fn () =>
+                Category::active()->ordered()->get()
+                    ->map(fn ($c) => [
+                        'id'     => $c->id,
+                        'value'  => $c->value,
+                        'label'  => $c->label,
+                        'icon'   => $c->icon,
+                        'color'  => $c->color,
+                        'order'  => $c->order,
+                        'active' => $c->active,
+                    ])->values()->all()
+            ),
         ];
     }
 }

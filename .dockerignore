@@ -1,0 +1,44 @@
+# Dependencies
+vendor/
+node_modules/
+
+# Build artifacts
+public/build/
+public/hot
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Storage (runtime generated)
+storage/app/
+storage/logs/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+
+# Development tools
+.git/
+.github/
+docs/GUIDES/
+docs/DEPLOYMENT/
+
+# IDE and OS
+.idea/
+.vscode/
+*.DS_Store
+Thumbs.db
+
+# Tests
+tests/
+phpunit.xml
+
+# Legacy data (large, not needed in container)
+docs/sedekah.db
+docs/images/
+
+# Docker files (no recursion)
+docker-compose.yml
+docker-compose.*.yml
+Dockerfile
