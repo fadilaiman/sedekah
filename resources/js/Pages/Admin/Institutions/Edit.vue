@@ -122,6 +122,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { Head, Link, useForm, router } from '@inertiajs/vue3'
+import axios from 'axios'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import InstitutionForm from '@/Components/Admin/InstitutionForm.vue'
 
@@ -171,15 +172,26 @@ function setQrFile(file) {
   reader.readAsDataURL(file)
 }
 
-function uploadQr() {
+async function uploadQr() {
   if (!qrForm.qr_image || !qrForm.payment_method_id) return
   uploading.value = true
   const data = new FormData()
   data.append('payment_method_id', qrForm.payment_method_id)
   data.append('qr_image', qrForm.qr_image)
-  router.post(route('admin.institutions.qr.store', props.institution.id), data, {
-    onFinish: () => { uploading.value = false; qrPreview.value = null; qrForm.qr_image = null; qrForm.payment_method_id = '' },
-  })
+
+  try {
+    await axios.post(route('admin.institutions.qr.store', props.institution.id), data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    router.visit(route('admin.institutions.edit', props.institution.id))
+  } catch (e) {
+    console.error('QR upload failed:', e.response?.data || e.message)
+  } finally {
+    uploading.value = false
+    qrPreview.value = null
+    qrForm.qr_image = null
+    qrForm.payment_method_id = ''
+  }
 }
 
 function toggleQr(qr) {
