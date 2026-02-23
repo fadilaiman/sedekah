@@ -154,11 +154,7 @@
           </p>
           <div class="flex gap-3">
             <button @click="deleteTarget = null" class="flex-1 py-2 rounded-xl border border-gray-200 text-sm font-medium hover:bg-gray-50 transition-colors">Batal</button>
-            <form :action="route('admin.institutions.destroy', deleteTarget.id)" method="POST" class="flex-1">
-              <input type="hidden" name="_method" value="DELETE" />
-              <input type="hidden" name="_token" :value="csrfToken" />
-              <button type="submit" class="w-full py-2 rounded-xl bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors">Padam</button>
-            </form>
+            <button @click="performDelete" class="flex-1 py-2 rounded-xl bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors">Padam</button>
           </div>
         </div>
       </div>
@@ -181,7 +177,6 @@ const search = ref(props.filters.search || '')
 const category = ref(props.filters.category || '')
 const verified = ref(props.filters.verified || 'unverified')
 const deleteTarget = ref(null)
-const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
 
 const { allCategories, getCategoryLabel } = useCategories()
 
@@ -206,5 +201,12 @@ function setVerificationStatus(status) {
 
 function confirmDelete(inst) {
   deleteTarget.value = inst
+}
+
+function performDelete() {
+  if (!deleteTarget.value) return
+  router.delete(route('admin.institutions.destroy', deleteTarget.value.id), {
+    onSuccess: () => { deleteTarget.value = null },
+  })
 }
 </script>

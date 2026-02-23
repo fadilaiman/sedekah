@@ -122,7 +122,6 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { Head, Link, useForm, router } from '@inertiajs/vue3'
-import axios from 'axios'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import InstitutionForm from '@/Components/Admin/InstitutionForm.vue'
 
@@ -172,25 +171,18 @@ function setQrFile(file) {
   reader.readAsDataURL(file)
 }
 
-async function uploadQr() {
+function uploadQr() {
   if (!qrForm.qr_image || !qrForm.payment_method_id) return
   uploading.value = true
-  const data = new FormData()
-  data.append('payment_method_id', qrForm.payment_method_id)
-  data.append('qr_image', qrForm.qr_image)
-
-  try {
-    const response = await axios.post(route('admin.institutions.qr.store', props.institution.id), data)
-    if (response.status === 302 || response.status === 200) {
-      router.visit(route('admin.institutions.edit', props.institution.id))
-    }
-  } catch (e) {
-    const errorMsg = e.response?.data?.message || e.response?.data?.errors?.qr_image?.[0] || 'Gagal memuat naik QR code'
-    qrError.value = errorMsg
-    console.error('QR upload failed:', e.response?.data || e.message)
-  } finally {
-    uploading.value = false
-  }
+  router.post(route('admin.institutions.qr.store', props.institution.id), {
+    payment_method_id: qrForm.payment_method_id,
+    qr_image: qrForm.qr_image,
+  }, {
+    forceFormData: true,
+    onSuccess: () => { qrPreview.value = null; qrForm.qr_image = null; qrForm.payment_method_id = '' },
+    onError: (errors) => { qrError.value = errors.qr_image || 'Gagal memuat naik QR code' },
+    onFinish: () => { uploading.value = false },
+  })
 }
 
 function toggleQr(qr) {

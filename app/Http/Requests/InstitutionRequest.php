@@ -24,8 +24,7 @@ class InstitutionRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('institutions', 'name')
-                    ->ignore($institutionId)
-                    ->whereNull('deleted_at'),
+                    ->ignore($institutionId),
             ],
             'category' => [
                 'required',
@@ -43,6 +42,7 @@ class InstitutionRequest extends FormRequest
             'contact_email' => ['nullable', 'email', 'max:255'],
             'contact_phone' => ['nullable', 'string', 'max:20'],
             'external_campaign_url' => ['nullable', 'url', 'max:500'],
+            'url' => ['nullable', 'url', 'max:500'],
             'lat' => ['nullable', 'numeric', 'between:-90,90'],
             'lng' => ['nullable', 'numeric', 'between:-180,180'],
             'maps_url' => ['nullable', 'url', 'max:500'],

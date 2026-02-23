@@ -25,13 +25,26 @@ class SubmissionController extends Controller
 
         // Attach duplicate detection info
         $submissions->getCollection()->each(function ($submission) {
-            $submission->duplicates = Institution::where(
-                fn ($q) => $q
-                    ->where('name', 'like', "%{$submission->institution_name}%")
-                    ->orWhere('name', 'like', "%".explode(' ', $submission->institution_name)[0]."%")
-            )
+            // Exact match (same name + state + city) first, then partial name matches
+            $exactMatches = Institution::where('name', $submission->institution_name)
+                ->where('state', $submission->institution_state)
+                ->where('city', $submission->institution_city)
+                ->get(['id', 'name', 'city', 'state', 'slug']);
+
+            $partialMatches = Institution::where('name', 'like', "%{$submission->institution_name}%")
+                ->when($exactMatches->isNotEmpty(), fn ($q) => $q->whereNotIn('id', $exactMatches->pluck('id')))
                 ->limit(3)
                 ->get(['id', 'name', 'city', 'state', 'slug']);
+
+            $submission->duplicates = $exactMatches->merge($partialMatches);
+            $submission->exact_duplicate = $exactMatches->isNotEmpty();
+
+            // Also check other pending submissions with same name
+            $submission->pending_duplicates = Submission::where('id', '!=', $submission->id)
+                ->where('status', 'pending')
+                ->where('institution_name', $submission->institution_name)
+                ->limit(3)
+                ->get(['id', 'institution_name as name', 'institution_city as city', 'institution_state as state']);
         });
 
         return Inertia::render('Admin/Submissions/Index', [
@@ -42,17 +55,29 @@ class SubmissionController extends Controller
 
     public function show(Submission $submission)
     {
-        $duplicates = Institution::where(
-            fn ($q) => $q
-                ->where('name', 'like', "%{$submission->institution_name}%")
-                ->orWhere('name', 'like', "%".explode(' ', $submission->institution_name)[0]."%")
-        )
+        $exactMatches = Institution::where('name', $submission->institution_name)
+            ->where('state', $submission->institution_state)
+            ->where('city', $submission->institution_city)
+            ->get(['id', 'name', 'city', 'state', 'slug']);
+
+        $partialMatches = Institution::where('name', 'like', "%{$submission->institution_name}%")
+            ->when($exactMatches->isNotEmpty(), fn ($q) => $q->whereNotIn('id', $exactMatches->pluck('id')))
             ->limit(5)
             ->get(['id', 'name', 'city', 'state', 'slug']);
+
+        $duplicates = $exactMatches->merge($partialMatches);
+
+        $pendingDuplicates = Submission::where('id', '!=', $submission->id)
+            ->where('status', 'pending')
+            ->where('institution_name', $submission->institution_name)
+            ->limit(3)
+            ->get(['id', 'institution_name as name', 'institution_city as city', 'institution_state as state']);
 
         return Inertia::render('Admin/Submissions/Show', [
             'submission' => $submission,
             'duplicates' => $duplicates,
+            'exact_duplicate' => $exactMatches->isNotEmpty(),
+            'pending_duplicates' => $pendingDuplicates,
         ]);
     }
 

@@ -51,16 +51,23 @@
             <input v-model="form.institution_name" @input="checkDuplicate" type="text" required
               class="w-full rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white text-sm focus:ring-primary focus:border-primary"
               placeholder="Masjid Al-Hidayah" />
-            <!-- Duplicate Warning -->
-            <div v-if="duplicates.length > 0" class="mt-2 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
+            <!-- Duplicate Warning: Existing Institutions -->
+            <div v-if="duplicates.length > 0 || pendingDuplicates.length > 0" class="mt-2 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
               <p class="text-xs font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1 mb-2">
                 <span class="material-icons-round text-sm">warning</span>
                 Institusi yang serupa mungkin sudah ada:
               </p>
-              <div v-for="dup in duplicates" :key="dup.id" class="flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 mb-1">
+              <div v-for="dup in duplicates" :key="'inst-'+dup.id" class="flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 mb-1">
                 <span>{{ dup.name }} — {{ dup.city }}, {{ dup.state }}</span>
-                <Link :href="route('institutions.show', dup.slug)" target="_blank" class="underline hover:no-underline">Lihat</Link>
+                <Link v-if="dup.slug" :href="route('institutions.show', dup.slug)" target="_blank" class="underline hover:no-underline flex-shrink-0 ml-2">Lihat</Link>
               </div>
+              <div v-for="dup in pendingDuplicates" :key="'sub-'+dup.id" class="flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 mb-1">
+                <span>{{ dup.name }} — {{ dup.city }}, {{ dup.state }}</span>
+                <span class="text-xs italic flex-shrink-0 ml-2">Sedang disemak</span>
+              </div>
+              <p class="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                Sila pastikan institusi ini belum wujud sebelum menghantar.
+              </p>
             </div>
           </div>
 
@@ -75,7 +82,7 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Negeri <span class="text-red-500">*</span></label>
-              <select v-model="form.institution_state" required
+              <select v-model="form.institution_state" @change="checkDuplicate" required
                 class="w-full rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white text-sm focus:ring-primary focus:border-primary">
                 <option value="">-- Pilih --</option>
                 <option v-for="state in STATES" :key="state" :value="state">{{ state }}</option>
@@ -83,7 +90,7 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Bandar <span class="text-red-500">*</span></label>
-              <input v-model="form.institution_city" type="text" required
+              <input v-model="form.institution_city" @input="checkDuplicate" type="text" required
                 class="w-full rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white text-sm focus:ring-primary focus:border-primary"
                 placeholder="Petaling Jaya" />
             </div>
@@ -158,7 +165,7 @@
 
         <button
           type="submit"
-          :disabled="submitting || duplicates.length > 0"
+          :disabled="submitting"
           class="w-full btn-primary flex items-center justify-center gap-2 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span v-if="submitting" class="material-icons-round animate-spin text-base">sync</span>
@@ -192,6 +199,7 @@ const { activeCategories } = useCategories()
 
 const paymentMethods = ref([])
 const duplicates = ref([])
+const pendingDuplicates = ref([])
 const submitting = ref(false)
 const isDragging = ref(false)
 const qrPreview = ref(null)
@@ -215,11 +223,23 @@ const form = reactive({
 let duplicateTimer = null
 
 async function checkDuplicate() {
-  if (form.institution_name.length < 3) { duplicates.value = []; return }
+  if (form.institution_name.length < 3) { duplicates.value = []; pendingDuplicates.value = []; return }
   clearTimeout(duplicateTimer)
   duplicateTimer = setTimeout(async () => {
-    const res = await axios.get('/api/v1/institutions', { params: { search: form.institution_name, per_page: 3 } })
-    duplicates.value = res.data.data || []
+    try {
+      const res = await axios.get('/api/v1/submissions/check-duplicate', {
+        params: {
+          name: form.institution_name,
+          state: form.institution_state || undefined,
+          city: form.institution_city || undefined,
+        }
+      })
+      duplicates.value = res.data.institutions || []
+      pendingDuplicates.value = res.data.pending_submissions || []
+    } catch {
+      duplicates.value = []
+      pendingDuplicates.value = []
+    }
   }, 500)
 }
 

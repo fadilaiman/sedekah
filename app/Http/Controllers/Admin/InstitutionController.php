@@ -100,25 +100,36 @@ class InstitutionController extends Controller
         ]);
 
         $file = $request->file('qr_image');
-        if (!$file) {
-            return redirect()->back()->withErrors(['qr_image' => 'File upload failed']);
+
+        // Workaround: On Windows, realpath() fails for temp files in C:\Windows\Temp
+        // so Laravel's putFile/store methods break. Read file contents manually instead.
+        $filename = 'qr-codes/' . \Illuminate\Support\Str::random(40) . '.' . $file->guessExtension();
+        $stored = Storage::disk('public')->put($filename, file_get_contents($file->getPathname()));
+
+        if (!$stored) {
+            return redirect()->back()->withErrors(['qr_image' => 'Gagal menyimpan fail.']);
         }
 
-        try {
-            $filename = uniqid('qr_') . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('qr-codes', $filename, 'public');
+        $qr = QrCode::withTrashed()
+            ->where('institution_id', $institution->id)
+            ->where('payment_method_id', $validated['payment_method_id'])
+            ->first();
 
-            QrCode::updateOrCreate(
-                ['institution_id' => $institution->id, 'payment_method_id' => $validated['payment_method_id']],
-                ['qr_image_path' => $path, 'qr_image_url' => Storage::url($path), 'status' => 'active']
-            );
-
-            $this->bustInstitutionCache($institution);
-            return redirect()->back()->with('success', 'QR code berjaya dimuat naik.');
-        } catch (\Exception $e) {
-            \Log::error('QR code upload failed', ['error' => $e->getMessage()]);
-            return redirect()->back()->withErrors(['qr_image' => 'Gagal menyimpan fail: ' . $e->getMessage()]);
+        if ($qr) {
+            $qr->restore();
+            $qr->update(['qr_image_path' => $filename, 'qr_image_url' => Storage::url($filename), 'status' => 'active']);
+        } else {
+            QrCode::create([
+                'institution_id' => $institution->id,
+                'payment_method_id' => $validated['payment_method_id'],
+                'qr_image_path' => $filename,
+                'qr_image_url' => Storage::url($filename),
+                'status' => 'active',
+            ]);
         }
+
+        $this->bustInstitutionCache($institution);
+        return redirect()->back()->with('success', 'QR code berjaya dimuat naik.');
     }
 
     public function destroyQr(Institution $institution, QrCode $qrCode)

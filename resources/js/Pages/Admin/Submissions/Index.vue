@@ -68,15 +68,38 @@
               </p>
             </div>
 
-            <!-- Duplicate Warning -->
-            <div v-if="sub.duplicates?.length > 0" class="mb-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
+            <!-- Exact Duplicate Warning -->
+            <div v-if="sub.exact_duplicate" class="mb-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-300 dark:border-red-800">
+              <p class="text-xs font-bold text-red-700 dark:text-red-300 flex items-center gap-1 mb-1">
+                <span class="material-icons-round text-sm">error</span>
+                DUPLIKASI TEPAT — Institusi dengan nama, negeri dan bandar yang sama sudah wujud!
+              </p>
+              <div v-for="dup in sub.duplicates.filter(d => d.city === sub.institution_city && d.state === sub.institution_state)" :key="'exact-'+dup.id" class="text-xs text-red-700 dark:text-red-300 flex justify-between">
+                <span>{{ dup.name }} — {{ dup.city }}, {{ dup.state }}</span>
+                <a :href="route('institutions.show', dup.slug)" target="_blank" class="underline font-semibold">Lihat</a>
+              </div>
+            </div>
+
+            <!-- Partial Duplicate Warning -->
+            <div v-if="sub.duplicates?.length > 0 && !sub.exact_duplicate" class="mb-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
               <p class="text-xs font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1 mb-1">
                 <span class="material-icons-round text-sm">warning</span>
                 Mungkin duplikasi dengan institusi sedia ada:
               </p>
-              <div v-for="dup in sub.duplicates" :key="dup.id" class="text-xs text-amber-700 dark:text-amber-300 flex justify-between">
+              <div v-for="dup in sub.duplicates" :key="'partial-'+dup.id" class="text-xs text-amber-700 dark:text-amber-300 flex justify-between">
                 <span>{{ dup.name }} — {{ dup.city }}, {{ dup.state }}</span>
                 <a :href="route('institutions.show', dup.slug)" target="_blank" class="underline">Lihat</a>
+              </div>
+            </div>
+
+            <!-- Pending Duplicate Submissions -->
+            <div v-if="sub.pending_duplicates?.length > 0" class="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+              <p class="text-xs font-semibold text-blue-700 dark:text-blue-300 flex items-center gap-1 mb-1">
+                <span class="material-icons-round text-sm">content_copy</span>
+                Penyerahan lain dengan nama yang sama sedang menunggu:
+              </p>
+              <div v-for="dup in sub.pending_duplicates" :key="'pending-'+dup.id" class="text-xs text-blue-700 dark:text-blue-300">
+                {{ dup.name }} — {{ dup.city }}, {{ dup.state }}
               </div>
             </div>
 

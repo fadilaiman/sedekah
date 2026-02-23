@@ -22,7 +22,10 @@ class AdminQrCodeController extends Controller
             'status' => ['nullable', 'in:active,inactive,pending'],
         ]);
 
-        $path = $request->file('qr_image')->store('qr_codes', 'public');
+        // Workaround: realpath() fails for temp files on Windows, so use file_get_contents
+        $file = $request->file('qr_image');
+        $path = 'qr_codes/' . \Illuminate\Support\Str::random(40) . '.' . $file->guessExtension();
+        Storage::disk('public')->put($path, file_get_contents($file->getPathname()));
 
         $qrCode = $institution->qrCodes()->create([
             'payment_method_id' => $request->payment_method_id,

@@ -32,6 +32,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
 
         // Community submission (public, separate rate limit)
+        Route::get('/submissions/check-duplicate', [\App\Http\Controllers\Api\SubmissionController::class, 'checkDuplicate']);
         Route::post('/submissions', [\App\Http\Controllers\Api\SubmissionController::class, 'store'])
             ->middleware('throttle:5,60');
     });
