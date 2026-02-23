@@ -52,10 +52,23 @@ class PostToDaun implements ShouldQueue
     {
         $institutionName = $this->payload['institution_name'] ?? 'Unknown';
         $state = $this->payload['state'] ?? '';
+        $slug = $this->payload['slug'] ?? null;
+        $submitterName = $this->payload['submitter_name'] ?? null;
 
-        return "✅ Institusi Disahkan\n\n"
-            . "{$institutionName}" . ($state ? " ({$state})" : '') . " kini telah disahkan dan boleh menerima sumbangan melalui Sedekah.info.\n\n"
-            . "Terima kasih kerana bersama membina ekosistem sedekah yang telus 🤲";
+        $post = "✅ Institusi Disahkan\n\n"
+            . "{$institutionName}" . ($state ? " ({$state})" : '') . " kini telah disahkan dan boleh menerima sumbangan melalui Sedekah.info.\n\n";
+
+        if ($submitterName) {
+            $post .= "Dihantar oleh: {$submitterName}\n\n";
+        }
+
+        if ($slug) {
+            $post .= "https://sedekah.info/{$slug}\n\n";
+        }
+
+        $post .= "Terima kasih kerana bersama membina ekosistem sedekah yang telus 🤲";
+
+        return $post;
     }
 
     /**

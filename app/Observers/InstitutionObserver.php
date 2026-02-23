@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Jobs\PostToDaun;
 use App\Models\Institution;
+use App\Models\Submission;
 
 class InstitutionObserver
 {
@@ -19,10 +20,17 @@ class InstitutionObserver
             && $institution->verified_at !== null
             && $institution->getOriginal('verified_at') === null
         ) {
-            // Dispatch async job to post to Daun
+            // Try to find the submitter from the matching submission
+            $submitterName = Submission::where('institution_name', $institution->name)
+                ->where('status', 'approved')
+                ->latest('reviewed_at')
+                ->value('submitter_name');
+
             PostToDaun::dispatch('institution_verified', [
                 'institution_name' => $institution->name,
                 'state' => $institution->state,
+                'slug' => $institution->slug,
+                'submitter_name' => $submitterName,
             ]);
         }
     }
