@@ -71,6 +71,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login/verify/{token}', [MagicLinkController::class, 'verifyToken'])
         ->name('login.verify');
 
+    Route::post('/login/verify', [MagicLinkController::class, 'confirmToken'])
+        ->name('login.confirm');
+
     Route::post('/logout', [MagicLinkController::class, 'logout'])
         ->name('logout');
 

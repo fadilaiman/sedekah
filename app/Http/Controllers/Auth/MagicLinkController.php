@@ -71,14 +71,36 @@ class MagicLinkController extends Controller
         return back()->with('status', 'If that email is registered, you will receive a login link.');
     }
 
-    // Verify token and log in user
-    public function verifyToken(Request $request, string $token): RedirectResponse
+    // Show confirmation page (GET) — does NOT consume the token
+    // This prevents email security scanners from pre-clicking and burning the token
+    public function verifyToken(Request $request, string $token): RedirectResponse|Response
     {
         $record = MagicLinkToken::where('token', $token)->first();
 
         if (! $record || ! $record->isValid()) {
+            $reason = ($record && $record->isUsed()) ? 'used' : 'expired';
+
             return Redirect::route('admin.login')
-                ->withErrors(['token' => 'This login link is invalid or has expired.']);
+                ->withErrors(['token' => $reason === 'used'
+                    ? 'This login link has already been used. Please request a new one.'
+                    : 'This login link is invalid or has expired. Please request a new one.'
+                ]);
+        }
+
+        return Inertia::render('Auth/MagicLinkConfirm', [
+            'token' => $token,
+        ]);
+    }
+
+    // Actually log in (POST) — consumes the token
+    public function confirmToken(Request $request): RedirectResponse
+    {
+        $token = $request->input('token');
+        $record = MagicLinkToken::where('token', $token)->first();
+
+        if (! $record || ! $record->isValid()) {
+            return Redirect::route('admin.login')
+                ->withErrors(['token' => 'This login link is invalid or has expired. Please request a new one.']);
         }
 
         $user = User::where('email', $record->email)->first();

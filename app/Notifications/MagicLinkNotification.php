@@ -2,14 +2,14 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class MagicLinkNotification extends Notification implements ShouldQueue
+// Intentionally NOT queued — magic links must be sent immediately.
+// Queuing risks silent failure if the queue worker is down,
+// and also erodes the 30-minute window before the user even sees the email.
+class MagicLinkNotification extends Notification
 {
-    use Queueable;
 
     public function __construct(
         private readonly string $token

@@ -9,6 +9,10 @@
       </div>
 
       <form class="mt-8 space-y-6" @submit.prevent="submit">
+        <p v-if="errors.token" class="rounded-md bg-red-50 p-4 text-sm text-red-800">
+          {{ errors.token }}
+        </p>
+
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700">
             Email address
@@ -50,6 +54,7 @@ import { computed } from 'vue'
 
 const page = usePage()
 const status = computed(() => page.props.flash?.status)
+const errors = computed(() => page.props.errors ?? {})
 
 const form = useForm({
   email: '',

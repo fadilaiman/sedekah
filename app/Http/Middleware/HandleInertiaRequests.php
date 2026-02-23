@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'success' => session('success'),
                 'error' => session('error'),
+                'status' => session('status'),
             ],
             'pendingSubmissions' => $request->user()?->isAdmin()
                 ? Submission::where('status', 'pending')->count()
