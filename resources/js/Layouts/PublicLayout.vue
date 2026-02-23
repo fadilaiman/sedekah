@@ -13,7 +13,7 @@
             <span class="material-icons-round text-base">mosque</span>
           </div>
           <span class="font-bold text-base tracking-tight text-primary dark:text-white">
-            Sedekah<span class="text-secondary">.online</span>
+            Sedekah<span class="text-secondary">.info</span>
           </span>
         </Link>
 
@@ -134,6 +134,9 @@
         </div>
       </div>
     </footer>
+
+    <!-- Daun.me floating widget -->
+    <DaunWidget />
   </div>
 </template>
 
@@ -141,6 +144,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import { useCategories } from '@/Composables/useCategories'
+import DaunWidget from '@/Components/DaunWidget.vue'
 
 const mobileMenuOpen = ref(false)
 const navEl = ref(null)

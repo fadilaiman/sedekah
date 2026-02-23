@@ -31,6 +31,9 @@ Route::prefix('v1')->group(function () {
         // Payment methods
         Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
 
+        // Daun.me feed proxy
+        Route::get('/daun/posts', [\App\Http\Controllers\Api\DaunPostController::class, 'index']);
+
         // Community submission (public, separate rate limit)
         Route::get('/submissions/check-duplicate', [\App\Http\Controllers\Api\SubmissionController::class, 'checkDuplicate']);
         Route::post('/submissions', [\App\Http\Controllers\Api\SubmissionController::class, 'store'])
