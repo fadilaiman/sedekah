@@ -180,17 +180,16 @@ async function uploadQr() {
   data.append('qr_image', qrForm.qr_image)
 
   try {
-    await axios.post(route('admin.institutions.qr.store', props.institution.id), data, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
-    router.visit(route('admin.institutions.edit', props.institution.id))
+    const response = await axios.post(route('admin.institutions.qr.store', props.institution.id), data)
+    if (response.status === 302 || response.status === 200) {
+      router.visit(route('admin.institutions.edit', props.institution.id))
+    }
   } catch (e) {
+    const errorMsg = e.response?.data?.message || e.response?.data?.errors?.qr_image?.[0] || 'Gagal memuat naik QR code'
+    qrError.value = errorMsg
     console.error('QR upload failed:', e.response?.data || e.message)
   } finally {
     uploading.value = false
-    qrPreview.value = null
-    qrForm.qr_image = null
-    qrForm.payment_method_id = ''
   }
 }
 

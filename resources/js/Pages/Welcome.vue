@@ -32,9 +32,49 @@
                 Hantar Institusi
               </Link>
             </div>
+
+            <!-- Mobile QR Preview — compact horizontal card -->
+            <div
+              v-if="(featuredWithQr.length > 0 || loading) && heroInstitution"
+              class="lg:hidden mt-6 cursor-pointer"
+              @click="onHeroCardClick"
+            >
+              <div class="flex items-center gap-4 bg-white/10 backdrop-blur-xl border border-white/20 p-3 rounded-2xl">
+                <div class="bg-white p-2 rounded-xl shrink-0">
+                  <img
+                    v-if="heroQrSrc"
+                    :src="heroQrSrc"
+                    :alt="heroInstitution.name"
+                    class="w-16 h-16 object-contain mix-blend-multiply"
+                  />
+                  <div v-else class="w-16 h-16 flex items-center justify-center text-gray-300">
+                    <span class="material-icons-round text-3xl">qr_code_2</span>
+                  </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-white/90 truncate">{{ heroInstitution.name }}</p>
+                  <p class="text-xs text-white/60">{{ heroInstitution.city }}, {{ heroInstitution.state }}</p>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button
+                    @click.stop="heroPrev"
+                    class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white/70"
+                  >
+                    <span class="material-icons-round text-xs">undo</span>
+                  </button>
+                  <span class="text-[10px] text-white/40 tabular-nums">{{ heroIndex + 1 }}/{{ featuredWithQr.length }}</span>
+                  <button
+                    @click.stop="heroRandomize"
+                    class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white/70"
+                  >
+                    <span class="material-icons-round text-xs">shuffle</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- Floating QR Preview — Tinder-style swipeable -->
+          <!-- Floating QR Preview — Tinder-style swipeable (desktop) -->
           <div class="hidden lg:block relative" v-if="featuredWithQr.length > 0 || loading">
             <div
               ref="heroCardEl"

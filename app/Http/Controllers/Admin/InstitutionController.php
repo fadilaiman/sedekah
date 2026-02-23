@@ -94,20 +94,31 @@ class InstitutionController extends Controller
     // QR code management
     public function storeQr(Request $request, Institution $institution)
     {
-        $request->validate([
+        $validated = $request->validate([
             'payment_method_id' => 'required|exists:payment_methods,id',
-            'qr_image' => 'required|image|mimes:jpeg,png|max:100',
+            'qr_image' => 'required|image|mimes:jpeg,png|max:1024',
         ]);
 
-        $path = $request->file('qr_image')->store('qr-codes', 'public');
+        $file = $request->file('qr_image');
+        if (!$file) {
+            return redirect()->back()->withErrors(['qr_image' => 'File upload failed']);
+        }
 
-        QrCode::updateOrCreate(
-            ['institution_id' => $institution->id, 'payment_method_id' => $request->payment_method_id],
-            ['qr_image_path' => $path, 'qr_image_url' => Storage::url($path), 'status' => 'active']
-        );
+        try {
+            $filename = uniqid('qr_') . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('qr-codes', $filename, 'public');
 
-        $this->bustInstitutionCache($institution);
-        return redirect()->back()->with('success', 'QR code berjaya dimuat naik.');
+            QrCode::updateOrCreate(
+                ['institution_id' => $institution->id, 'payment_method_id' => $validated['payment_method_id']],
+                ['qr_image_path' => $path, 'qr_image_url' => Storage::url($path), 'status' => 'active']
+            );
+
+            $this->bustInstitutionCache($institution);
+            return redirect()->back()->with('success', 'QR code berjaya dimuat naik.');
+        } catch (\Exception $e) {
+            \Log::error('QR code upload failed', ['error' => $e->getMessage()]);
+            return redirect()->back()->withErrors(['qr_image' => 'Gagal menyimpan fail: ' . $e->getMessage()]);
+        }
     }
 
     public function destroyQr(Institution $institution, QrCode $qrCode)

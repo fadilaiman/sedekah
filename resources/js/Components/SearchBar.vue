@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-4xl glass-panel rounded-full flex flex-col md:flex-row gap-2 p-2 shadow-xl ring-1 ring-white/50 dark:ring-white/10">
+  <div class="w-full max-w-4xl glass-panel rounded-2xl md:rounded-full flex flex-col md:flex-row gap-2 p-2 shadow-xl ring-1 ring-white/50 dark:ring-white/10">
     <!-- State Selector -->
     <div class="relative min-w-[160px]">
       <select
@@ -15,6 +15,9 @@
       </div>
       <div class="absolute inset-y-2 right-0 w-px bg-gray-200 dark:bg-gray-700 hidden md:block"></div>
     </div>
+
+    <!-- Mobile divider -->
+    <div class="h-px bg-gray-200 dark:bg-gray-700 mx-3 md:hidden"></div>
 
     <!-- Search Input -->
     <div class="relative flex-grow group">
