@@ -33,9 +33,7 @@ class DaunService
 
             $response = Http::withHeaders([
                 'X-API-Key' => $apiKey,
-            ])->post("{$apiUrl}/api/v2/posts", [
-                'content' => $content,
-            ]);
+            ])->attach('content', $content)->post("{$apiUrl}/api/v2/posts");
 
             if ($response->status() === 201) {
                 return true;
