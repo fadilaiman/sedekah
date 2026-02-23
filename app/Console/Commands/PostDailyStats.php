@@ -110,7 +110,7 @@ class PostDailyStats extends Command
      */
     private function buildPostContent(array $payload): string
     {
-        return "📊 Kemas Kini Harian Sedekah.online\n"
+        return "📊 Kemas Kini Harian Sedekah.info\n"
             . "{$payload['date']}\n\n"
             . "Hari ini:\n"
             . "• {$payload['page_visits']} lawatan\n"

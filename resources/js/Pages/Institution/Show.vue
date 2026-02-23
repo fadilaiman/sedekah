@@ -1,6 +1,6 @@
 <template>
   <PublicLayout>
-    <Head :title="`${institution.name} — Sedekah.online`" />
+    <Head :title="`${institution.name} — Sedekah.info`" />
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
 

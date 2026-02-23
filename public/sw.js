@@ -1,5 +1,5 @@
 /**
- * Sedekah.online — Service Worker
+ * Sedekah.info — Service Worker
  *
  * Strategy:
  *   /build/*  → Cache-first  (immutable versioned assets)
@@ -91,7 +91,7 @@ async function networkFirst(request, cacheName) {
 
         // Offline fallback: return cached homepage if available
         const fallback = await caches.match('/');
-        return fallback ?? new Response('Sedekah.online is offline. Please check your connection.', {
+        return fallback ?? new Response('Sedekah.info is offline. Please check your connection.', {
             status: 503,
             headers: { 'Content-Type': 'text/plain' },
         });

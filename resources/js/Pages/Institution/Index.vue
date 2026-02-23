@@ -1,6 +1,6 @@
 <template>
   <PublicLayout>
-    <Head title="Senarai Institusi — Sedekah.online" />
+    <Head title="Senarai Institusi — Sedekah.info" />
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
 

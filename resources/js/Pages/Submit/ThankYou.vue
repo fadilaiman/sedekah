@@ -1,6 +1,6 @@
 <template>
   <PublicLayout>
-    <Head title="Terima Kasih — Sedekah.online" />
+    <Head title="Terima Kasih — Sedekah.info" />
 
     <div class="max-w-md mx-auto px-4 sm:px-6 py-16 text-center">
       <div class="glass-panel rounded-3xl p-10">

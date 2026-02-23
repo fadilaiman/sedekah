@@ -54,7 +54,7 @@ class PostToDaun implements ShouldQueue
         $state = $this->payload['state'] ?? '';
 
         return "✅ Institusi Disahkan\n\n"
-            . "{$institutionName}" . ($state ? " ({$state})" : '') . " kini telah disahkan dan boleh menerima sumbangan melalui Sedekah.online.\n\n"
+            . "{$institutionName}" . ($state ? " ({$state})" : '') . " kini telah disahkan dan boleh menerima sumbangan melalui Sedekah.info.\n\n"
             . "Terima kasih kerana bersama membina ekosistem sedekah yang telus 🤲";
     }
 
@@ -70,7 +70,7 @@ class PostToDaun implements ShouldQueue
         $verifiedToday = $this->payload['verified_today'] ?? 0;
         $activeTotal = $this->payload['active_total'] ?? 0;
 
-        return "📊 Kemas Kini Harian Sedekah.online\n"
+        return "📊 Kemas Kini Harian Sedekah.info\n"
             . "{$date}\n\n"
             . "Hari ini:\n"
             . "• {$pageVisits} lawatan\n"

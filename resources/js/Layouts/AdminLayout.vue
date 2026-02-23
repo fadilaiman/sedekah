@@ -14,7 +14,7 @@
           <span class="material-icons-round text-white text-sm">mosque</span>
         </div>
         <div>
-          <p class="font-bold text-gray-900 dark:text-white text-sm leading-none">Sedekah.online</p>
+          <p class="font-bold text-gray-900 dark:text-white text-sm leading-none">Sedekah.info</p>
           <p class="text-xs text-gray-400 mt-0.5">Admin Panel</p>
         </div>
       </div>

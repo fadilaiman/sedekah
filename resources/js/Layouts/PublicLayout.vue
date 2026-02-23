@@ -88,7 +88,7 @@
               <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
                 <span class="material-icons-round text-xl">mosque</span>
               </div>
-              <span class="font-bold text-lg text-gray-900 dark:text-white">Sedekah.online</span>
+              <span class="font-bold text-lg text-gray-900 dark:text-white">Sedekah.info</span>
             </div>
             <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
               Platform infaq QR berpusat untuk memudahkan urusan sedekah ke masjid, surau, dan institusi agama di Malaysia.
@@ -127,7 +127,7 @@
         </div>
 
         <div class="border-t border-gray-100 dark:border-gray-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
-          <p>© {{ new Date().getFullYear() }} Sedekah.online. Hak Cipta Terpelihara.</p>
+          <p>© {{ new Date().getFullYear() }} Sedekah.info. Hak Cipta Terpelihara.</p>
           <div class="flex items-center gap-1">
             Made with <span class="material-icons-round text-red-400 text-sm mx-0.5" style="font-size:14px">favorite</span> for Ummah
           </div>

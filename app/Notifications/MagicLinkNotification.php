@@ -25,12 +25,12 @@ class MagicLinkNotification extends Notification
         $url = route('admin.login.verify', ['token' => $this->token]);
 
         return (new MailMessage)
-            ->subject('Your Sedekah.online Admin Login Link')
+            ->subject('Your Sedekah.info Admin Login Link')
             ->greeting('Hello!')
-            ->line('Click the button below to log in to the Sedekah.online admin panel.')
+            ->line('Click the button below to log in to the Sedekah.info admin panel.')
             ->line('This link is valid for **30 minutes** and can only be used once.')
             ->action('Log In to Admin Panel', $url)
             ->line('If you did not request this link, you can safely ignore this email.')
-            ->salutation('Sedekah.online Team');
+            ->salutation('Sedekah.info Team');
     }
 }

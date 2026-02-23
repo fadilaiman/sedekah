@@ -1,6 +1,6 @@
 <template>
   <PublicLayout>
-    <Head title="Sedekah.online — QR Sedekah Malaysia" />
+    <Head title="Sedekah.info — QR Sedekah Malaysia" />
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 

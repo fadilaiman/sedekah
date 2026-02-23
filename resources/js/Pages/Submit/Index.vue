@@ -1,6 +1,6 @@
 <template>
   <PublicLayout>
-    <Head title="Hantar Institusi — Sedekah.online" />
+    <Head title="Hantar Institusi — Sedekah.info" />
 
     <div class="max-w-2xl mx-auto px-4 sm:px-6 pb-16">
       <!-- Header -->
