@@ -36,9 +36,12 @@ return [
     ],
 
     'daun' => [
-        'api_url' => env('DAUN_API_URL', 'https://daun.me'),
-        'api_key' => env('DAUN_API_KEY'),
-        'enabled' => env('DAUN_ENABLED', false),
+        'api_url'       => env('DAUN_API_URL', 'https://daun.me'),
+        'api_key'       => env('DAUN_API_KEY'),
+        'client_id'     => env('DAUN_CLIENT_ID'),
+        'client_secret' => env('DAUN_CLIENT_SECRET'),
+        'redirect_uri'  => env('DAUN_REDIRECT_URI'),
+        'enabled'       => env('DAUN_ENABLED', false),
     ],
 
 ];
